@@ -11,5 +11,5 @@ public interface StudySessionRepository extends MongoRepository<StudySession, St
     List<StudySession> findByUserId(String userId);
     List<StudySession> findByUserIdOrderByCreatedAtDesc(String userId);
     List<StudySession> findByUserIdAndCategory(String userId, String category);
-    List<StudySession> findByUserIdBetweenCreatedAt(String userId, LocalDateTime start, LocalDateTime end);
+    List<StudySession> findByUserIdAndCreatedAtBetween(String userId, LocalDateTime start, LocalDateTime end);
 }

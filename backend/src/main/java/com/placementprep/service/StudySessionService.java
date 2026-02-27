@@ -19,7 +19,7 @@ public class StudySessionService {
     private final UserRepository userRepository;
     
     public StudySession logSession(String userId, Map<String, Object> sessionData) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         StudySession session = StudySession.builder()

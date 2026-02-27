@@ -33,6 +33,7 @@ export const authAPI = {
   login: (email, password) => api.post('/auth/login', { email, password }),
   register: (data) => api.post('/auth/register', data),
   getMe: () => api.get('/auth/me'),
+  updateProfile: (data) => api.put('/auth/profile', data),
 };
 
 export const progressAPI = {
@@ -44,6 +45,7 @@ export const progressAPI = {
 
 export const quizAPI = {
   getAllQuizzes: () => api.get('/quizzes'),
+  getQuizById: (id) => api.get(`/quizzes/${id}`),
   getByCategory: (category) => api.get(`/quizzes/category/${category}`),
   getByDifficulty: (difficulty) => api.get(`/quizzes/difficulty/${difficulty}`),
   startQuiz: (id) => api.post(`/quizzes/${id}/start`),
@@ -54,7 +56,21 @@ export const quizAPI = {
 export const roadmapAPI = {
   generate: (data) => api.post('/roadmap/generate', data),
   getRoadmap: () => api.get('/roadmap'),
-  updatePhase: (phaseId, completed) => api.put(`/roadmap/phases/${phaseId}?completed=${completed}`),
+  updatePhase: (roadmapId, phaseId, data) => api.put(`/roadmap/${roadmapId}/phases/${phaseId}`, data),
+};
+
+export const adminAPI = {
+  getStats: () => api.get('/admin/stats'),
+  getUsers: () => api.get('/admin/users'),
+  updateUserRole: (id, role) => api.put(`/admin/users/${id}/role`, { role }),
+  toggleUserActive: (id) => api.put(`/admin/users/${id}/toggle-active`),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
+  getQuizzes: () => api.get('/admin/quizzes'),
+  createQuiz: (data) => api.post('/admin/quizzes', data),
+  updateQuiz: (id, data) => api.put(`/admin/quizzes/${id}`, data),
+  deleteQuiz: (id) => api.delete(`/admin/quizzes/${id}`),
+  toggleQuizActive: (id) => api.put(`/admin/quizzes/${id}/toggle-active`),
+  getLeaderboard: () => api.get('/admin/leaderboard'),
 };
 
 export const interviewAPI = {

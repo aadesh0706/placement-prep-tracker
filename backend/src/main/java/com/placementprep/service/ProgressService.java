@@ -21,7 +21,7 @@ public class ProgressService {
     private final MockInterviewRepository mockInterviewRepository;
     
     public ProgressDTO getUserProgress(String userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         List<StudySession> sessions = studySessionRepository.findByUserId(userId);

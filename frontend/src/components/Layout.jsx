@@ -10,22 +10,30 @@ import {
   ChartBarIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  UserCircleIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 
-const navigation = [
+const baseNavigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Quizzes', href: '/quizzes', icon: BookOpenIcon },
   { name: 'Mock Interviews', href: '/interviews', icon: VideoCameraIcon },
   { name: 'Study Roadmap', href: '/roadmap', icon: AcademicCapIcon },
   { name: 'Resume', href: '/resume', icon: DocumentTextIcon },
   { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
+  { name: 'Profile', href: '/profile', icon: UserCircleIcon },
 ];
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const isAdmin = user?.role === 'TPO' || user?.role === 'ADMIN';
+  const navigation = isAdmin
+    ? [...baseNavigation, { name: 'Admin Panel', href: '/admin', icon: ShieldCheckIcon }]
+    : baseNavigation;
 
   const handleLogout = () => {
     logout();

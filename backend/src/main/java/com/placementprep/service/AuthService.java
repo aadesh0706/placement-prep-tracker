@@ -1,13 +1,10 @@
 package com.placementprep.service;
 
 import com.placementprep.dto.*;
-import com.placementprep.model.*;
+import com.placementprep.model.User;
 import com.placementprep.repository.*;
 import com.placementprep.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,7 +30,7 @@ public class AuthService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
         
-        return new User(user.getEmail(), user.getPassword(), new ArrayList<>());
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
     
     public AuthResponse register(RegisterRequest request) {
@@ -115,7 +112,23 @@ public class AuthService implements UserDetailsService {
         
         return mapToUserDTO(user);
     }
-    
+
+    public UserDTO updateProfile(String email, Map<String, Object> updates) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (updates.containsKey("firstName")) user.setFirstName((String) updates.get("firstName"));
+        if (updates.containsKey("lastName")) user.setLastName((String) updates.get("lastName"));
+        if (updates.containsKey("phone")) user.setPhone((String) updates.get("phone"));
+        if (updates.containsKey("batch")) user.setBatch((String) updates.get("batch"));
+        if (updates.containsKey("department")) user.setDepartment((String) updates.get("department"));
+        if (updates.containsKey("targetPackage")) user.setTargetPackage((Integer) updates.get("targetPackage"));
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+        return mapToUserDTO(user);
+    }
+
     private UserDTO mapToUserDTO(User user) {
         return UserDTO.builder()
                 .id(user.getId())

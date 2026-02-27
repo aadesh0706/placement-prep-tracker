@@ -44,34 +44,3 @@ public class StudyRoadmap {
     private LocalDateTime updatedAt;
     private LocalDateTime targetCompletionDate;
 }
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-class RoadmapPhase {
-    private String id;
-    private String title;
-    private String description;
-    private Integer weekNumber;
-    private List<String> topics;
-    private List<StudyResource> resources;
-    private List<String> milestones;
-    private Integer estimatedHours;
-    private Boolean isCompleted;
-    private LocalDateTime completedAt;
-}
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-class StudyResource {
-    private String id;
-    private String title;
-    private String type; // VIDEO, ARTICLE, PRACTICE, QUIZ
-    private String url;
-    private String description;
-    private Integer duration; // in minutes
-    private Boolean isCompleted;
-}

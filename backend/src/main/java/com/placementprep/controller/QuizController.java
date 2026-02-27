@@ -2,7 +2,9 @@ package com.placementprep.controller;
 
 import com.placementprep.dto.QuizDTO;
 import com.placementprep.dto.QuizAttemptDTO;
+import com.placementprep.model.Quiz;
 import com.placementprep.model.QuizAttempt;
+import com.placementprep.model.UserAnswer;
 import com.placementprep.service.QuizService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +38,8 @@ public class QuizController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<QuizDTO> getQuizById(@PathVariable String id) {
-        return ResponseEntity.ok(mapToQuizDTO(quizService.getQuizById(id)));
+    public ResponseEntity<Quiz> getQuizById(@PathVariable String id) {
+        return ResponseEntity.ok(quizService.getQuizById(id));
     }
     
     @PostMapping("/{id}/start")
@@ -51,8 +53,16 @@ public class QuizController {
     public ResponseEntity<QuizAttempt> submitQuiz(
             @PathVariable String attemptId,
             @RequestBody List<Map<String, Object>> answers) {
-        // Convert to UserAnswer objects - simplified
-        return ResponseEntity.ok(quizService.submitQuiz(attemptId, null));
+        List<UserAnswer> userAnswers = answers.stream().map(a -> {
+            String questionId = (String) a.get("questionId");
+            Integer selectedOptionIndex = a.get("selectedOptionIndex") instanceof Number
+                    ? ((Number) a.get("selectedOptionIndex")).intValue() : null;
+            return UserAnswer.builder()
+                    .questionId(questionId)
+                    .selectedOptionIndex(selectedOptionIndex)
+                    .build();
+        }).collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(quizService.submitQuiz(attemptId, userAnswers));
     }
     
     @GetMapping("/attempts")
