@@ -87,6 +87,11 @@ export const nlpAPI = {
   getResumes: () => api.get('/nlp/resume'),
   analyzeHRAnswer: (question, answer) => api.post('/nlp/hr/analyze', { question, answer }),
   getHRAnswers: () => api.get('/nlp/hr'),
+  // Enhanced AI/ML features
+  matchResumeToJob: (resumeText, jobDescription) => api.post('/nlp/resume/match', { resumeText, jobDescription }),
+  getCompanyPrepTips: (company, role) => api.get('/nlp/company/tips', { params: { company, role } }),
+  analyzeWeakAreas: () => api.get('/nlp/analysis/weak-areas'),
+  generateStudyPlan: (goal, currentLevel, hoursPerWeek) => api.post('/nlp/study/plan', { goal, currentLevel, hoursPerWeek }),
 };
 
 export default api;

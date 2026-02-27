@@ -22,6 +22,10 @@ const MockInterviews = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [expanded, setExpanded] = useState(null);
   const [creating, setCreating] = useState(false);
+  const [activeInterview, setActiveInterview] = useState(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [responseText, setResponseText] = useState('');
+  const [submittingResponse, setSubmittingResponse] = useState(false);
   const [form, setForm] = useState({ type: 'TECHNICAL', difficulty: 'MEDIUM', topics: '' });
 
   useEffect(() => { fetchInterviews(); }, []);
@@ -31,6 +35,35 @@ const MockInterviews = () => {
     try { setInterviews(await interviewAPI.getAll()); }
     catch (e) { console.error(e); }
     finally { setLoading(false); }
+  };
+
+  const startInterviewSession = async (interview) => {
+    try {
+      const started = await interviewAPI.start(interview.id);
+      setActiveInterview({ ...interview, ...started, status: 'IN_PROGRESS' });
+      setCurrentQuestionIndex(0);
+      setResponseText('');
+    } catch (e) { alert('Failed to start interview'); }
+  };
+
+  const submitResponse = async () => {
+    if (!responseText.trim()) return;
+    setSubmittingResponse(true);
+    try {
+      const q = activeInterview.questions[currentQuestionIndex];
+      await interviewAPI.respond(activeInterview.id, q.id, responseText);
+      
+      if (currentQuestionIndex < activeInterview.questions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setResponseText('');
+      } else {
+        // All questions answered - complete interview
+        await interviewAPI.complete(activeInterview.id, { feedback: 'Interview completed' });
+        fetchInterviews();
+        setActiveInterview(null);
+      }
+    } catch (e) { alert('Failed to submit response'); }
+    finally { setSubmittingResponse(false); }
   };
 
   const createInterview = async (e) => {
@@ -118,20 +151,20 @@ const MockInterviews = () => {
       ) : (
         <div className="space-y-3">
           {interviews.map(iv => {
-            const Icon = typeIcon[iv.interviewType] || VideoCameraIcon;
+            const Icon = typeIcon[iv.type] || VideoCameraIcon;
             const isExp = expanded === iv.id;
             const score = iv.overallScore;
             return (
               <div key={iv.id} className="card">
                 <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpanded(isExp ? null : iv.id)}>
                   <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-lg ${typeColor[iv.interviewType] || 'bg-gray-100'}`}>
+                    <div className={`p-2 rounded-lg ${typeColor[iv.type] || 'bg-gray-100'}`}>
                       <Icon className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="flex items-center space-x-2">
-                        <p className="font-medium text-gray-900">{iv.interviewType?.replace('_', ' ')} Interview</p>
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeColor[iv.interviewType] || 'bg-gray-100 text-gray-600'}`}>{iv.difficulty || 'MEDIUM'}</span>
+                        <p className="font-medium text-gray-900">{iv.type?.replace('_', ' ')} Interview</p>
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeColor[iv.type] || 'bg-gray-100 text-gray-600'}`}>{iv.difficulty || 'MEDIUM'}</span>
                       </div>
                       <p className="text-xs text-gray-500">
                         {iv.createdAt ? new Date(iv.createdAt).toLocaleDateString() : 'Recent'}
@@ -140,6 +173,22 @@ const MockInterviews = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
+                    {iv.status === 'NOT_STARTED' && (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); startInterviewSession(iv); }}
+                        className="btn btn-primary text-sm"
+                      >
+                        Start
+                      </button>
+                    )}
+                    {iv.status === 'IN_PROGRESS' && (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); startInterviewSession(iv); }}
+                        className="btn btn-primary text-sm"
+                      >
+                        Continue
+                      </button>
+                    )}
                     {score != null && (
                       <div className="text-right">
                         <p className={`text-xl font-bold ${scoreColor(score)}`}>{score}<span className="text-sm text-gray-400">/10</span></p>

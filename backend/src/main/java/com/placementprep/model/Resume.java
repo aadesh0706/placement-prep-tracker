@@ -27,6 +27,7 @@ public class Resume {
     // Extracted data
     private String extractedText;
     private Map<String, Object> parsedData; // name, email, phone, skills, education, experience
+    private List<String> extractedSkills;
     
     // AI Evaluation
     private ResumeEvaluation evaluation;

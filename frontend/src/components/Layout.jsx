@@ -13,6 +13,7 @@ import {
   XMarkIcon,
   UserCircleIcon,
   ShieldCheckIcon,
+  ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline';
 
 const baseNavigation = [
@@ -21,6 +22,7 @@ const baseNavigation = [
   { name: 'Mock Interviews', href: '/interviews', icon: VideoCameraIcon },
   { name: 'Study Roadmap', href: '/roadmap', icon: AcademicCapIcon },
   { name: 'Resume', href: '/resume', icon: DocumentTextIcon },
+  { name: 'HR Answers', href: '/hr-answers', icon: ChatBubbleLeftRightIcon },
   { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
   { name: 'Profile', href: '/profile', icon: UserCircleIcon },
 ];

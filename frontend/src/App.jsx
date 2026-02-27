@@ -9,6 +9,7 @@ import Roadmap from './pages/Roadmap';
 import MockInterviews from './pages/MockInterviews';
 import Resume from './pages/Resume';
 import Analytics from './pages/Analytics';
+import HRAnswers from './pages/HRAnswers';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Layout from './components/Layout';
 
@@ -53,6 +54,7 @@ function AppRoutes() {
         <Route path="interviews" element={<MockInterviews />} />
         <Route path="roadmap" element={<Roadmap />} />
         <Route path="resume" element={<Resume />} />
+        <Route path="hr-answers" element={<HRAnswers />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="admin" element={<AdminDashboard />} />
       </Route>
