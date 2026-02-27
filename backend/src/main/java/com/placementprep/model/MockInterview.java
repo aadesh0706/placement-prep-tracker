@@ -48,28 +48,3 @@ public class MockInterview {
     private LocalDateTime completedAt;
     private LocalDateTime createdAt;
 }
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-class InterviewQuestion {
-    private String id;
-    private String question;
-    private String category;
-    private String type; // TECHNICAL, BEHAVIORAL, situational
-    private Integer expectedDuration; // seconds
-    private String sampleAnswer;
-}
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-class UserResponse {
-    private String questionId;
-    private String audioUrl; // if recorded
-    private String textResponse;
-    private Integer duration; // seconds
-    private Map<String, Object> evaluation; // AI evaluation
-}

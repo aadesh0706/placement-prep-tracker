@@ -42,6 +42,8 @@ public class Resume {
     
     private LocalDateTime uploadedAt;
     private LocalDateTime analyzedAt;
+    private String status; // PENDING, ANALYZED, FAILED
+    private Boolean isActive;
 }
 
 @Data

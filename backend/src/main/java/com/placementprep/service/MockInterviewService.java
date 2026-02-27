@@ -2,6 +2,7 @@ package com.placementprep.service;
 
 import com.placementprep.model.MockInterview;
 import com.placementprep.model.InterviewQuestion;
+import com.placementprep.model.UserResponse;
 import com.placementprep.repository.MockInterviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

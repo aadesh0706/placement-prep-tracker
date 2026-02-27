@@ -3,6 +3,13 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
+import Quizzes from './pages/Quizzes';
+import Roadmap from './pages/Roadmap';
+import MockInterviews from './pages/MockInterviews';
+import Resume from './pages/Resume';
+import Analytics from './pages/Analytics';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import Layout from './components/Layout';
 
 function PrivateRoute({ children }) {
@@ -41,11 +48,13 @@ function AppRoutes() {
       <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
         <Route index element={<Navigate to="/dashboard" />} />
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="quizzes" element={<div className="p-6"><h1 className="text-2xl font-bold">Quizzes</h1><p className="text-gray-600 mt-2">Quiz functionality coming soon...</p></div>} />
-        <Route path="interviews" element={<div className="p-6"><h1 className="text-2xl font-bold">Mock Interviews</h1><p className="text-gray-600 mt-2">Mock interview functionality coming soon...</p></div>} />
-        <Route path="roadmap" element={<div className="p-6"><h1 className="text-2xl font-bold">Study Roadmap</h1><p className="text-gray-600 mt-2">Roadmap functionality coming soon...</p></div>} />
-        <Route path="resume" element={<div className="p-6"><h1 className="text-2xl font-bold">Resume Analysis</h1><p className="text-gray-600 mt-2">Resume analysis coming soon...</p></div>} />
-        <Route path="analytics" element={<div className="p-6"><h1 className="text-2xl font-bold">Analytics</h1><p className="text-gray-600 mt-2">Analytics coming soon...</p></div>} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="quizzes" element={<Quizzes />} />
+        <Route path="interviews" element={<MockInterviews />} />
+        <Route path="roadmap" element={<Roadmap />} />
+        <Route path="resume" element={<Resume />} />
+        <Route path="analytics" element={<Analytics />} />
+        <Route path="admin" element={<AdminDashboard />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
@@ -54,7 +63,7 @@ function AppRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>

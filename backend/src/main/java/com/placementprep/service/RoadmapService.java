@@ -1,5 +1,6 @@
 package com.placementprep.service;
 
+import com.placementprep.dto.RoadmapGenerationRequest;
 import com.placementprep.model.*;
 import com.placementprep.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -17,16 +18,14 @@ public class RoadmapService {
     private final UserRepository userRepository;
     
     public StudyRoadmap generateRoadmap(String userId, RoadmapGenerationRequest request) {
-        // Check if roadmap already exists
-        if (roadmapRepository.existsByUserId(userId)) {
-            throw new RuntimeException("Roadmap already exists for this user");
-        }
+        // Delete existing roadmap if present (upsert behavior)
+        roadmapRepository.findByUserId(userId).ifPresent(roadmapRepository::delete);
         
         List<RoadmapPhase> phases = new ArrayList<>();
         
-        // Generate phases based on weeks available
-        int totalWeeks = request.getWeeksAvailable();
-        int hoursPerWeek = request.getHoursPerWeek();
+        // Generate phases based on weeks available (with defaults)
+        int totalWeeks = request.getWeeksAvailable() != null ? request.getWeeksAvailable() : 12;
+        int hoursPerWeek = request.getHoursPerWeek() != null ? request.getHoursPerWeek() : 10;
         
         // Get topics from database
         List<Topic> allTopics = topicRepository.findByIsActive(true);
@@ -82,7 +81,7 @@ public class RoadmapService {
         StudyRoadmap savedRoadmap = roadmapRepository.save(roadmap);
         
         // Update user with roadmap ID
-        userRepository.findById(userId).ifPresent(user -> {
+        userRepository.findByEmail(userId).ifPresent(user -> {
             user.setStudyRoadmapId(savedRoadmap.getId());
             userRepository.save(user);
         });
@@ -114,7 +113,7 @@ public class RoadmapService {
         roadmap.setOverallProgress((completedPhases * 100) / roadmap.getPhases().size());
         roadmap.setUpdatedAt(LocalDateTime.now());
         
-        return(LocalDateTime.now roadmapRepository.save(roadmap);
+        return roadmapRepository.save(roadmap);
     }
     
     private RoadmapPhase createPhase(int weekNumber, String title, String description, 

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -12,7 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class ProgressDTO {
-    private String oderallProgress;
+    private Integer overallProgress;
     private Integer totalStudyHours;
     private Integer quizzesCompleted;
     private Integer mockInterviewsCompleted;

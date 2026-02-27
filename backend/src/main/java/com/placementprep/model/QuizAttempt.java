@@ -41,15 +41,3 @@ public class QuizAttempt {
     private LocalDateTime startedAt;
     private LocalDateTime submittedAt;
 }
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-class UserAnswer {
-    private String questionId;
-    private Integer selectedOptionIndex;
-    private Boolean isCorrect;
-    private Integer marksObtained;
-    private String category;
-}

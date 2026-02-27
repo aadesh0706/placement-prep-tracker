@@ -3,8 +3,10 @@ package com.placementprep.service;
 import com.placementprep.dto.QuizDTO;
 import com.placementprep.dto.QuizAttemptDTO;
 import com.placementprep.model.Quiz;
+import com.placementprep.model.Question;
 import com.placementprep.model.QuizAttempt;
 import com.placementprep.model.User;
+import com.placementprep.model.UserAnswer;
 import com.placementprep.repository.QuizRepository;
 import com.placementprep.repository.QuizAttemptRepository;
 import com.placementprep.repository.UserRepository;
@@ -77,30 +79,44 @@ public class QuizService {
         List<String> weakAreas = new ArrayList<>();
         List<String> strongAreas = new ArrayList<>();
         
+        List<Question> questions = quiz.getQuestions() != null ? quiz.getQuestions() : new ArrayList<>();
+        if (answers == null) answers = new ArrayList<>();
         for (UserAnswer answer : answers) {
-            // Find the question in quiz
-            if (quiz.getQuestions() != null) {
-                Optional<Question> questionOpt = quiz.getQuestions().stream()
-                        .filter(q -> q.getId().equals(answer.getQuestionId()))
-                        .findFirst();
-                
-                if (questionOpt.isPresent()) {
-                    Question question = questionOpt.get();
-                    boolean isCorrect = question.getCorrectOptionIndex().equals(answer.getSelectedOptionIndex());
-                    answer.setIsCorrect(isCorrect);
-                    
-                    if (isCorrect) {
-                        correctAnswers++;
-                        marksObtained += question.getMarks();
-                        
-                        // Track category
-                        String category = question.getCategory();
-                        categoryWiseScore.put(category, categoryWiseScore.getOrDefault(category, 0) + question.getMarks());
+            Question question = null;
+            
+            // Try matching by real question ID first
+            if (answer.getQuestionId() != null && !answer.getQuestionId().isEmpty()) {
+                question = questions.stream()
+                        .filter(q -> q.getId() != null && q.getId().equals(answer.getQuestionId()))
+                        .findFirst().orElse(null);
+            }
+            
+            // Fall back: treat questionId as numeric index
+            if (question == null) {
+                try {
+                    int idx = Integer.parseInt(answer.getQuestionId());
+                    if (idx >= 0 && idx < questions.size()) {
+                        question = questions.get(idx);
                     }
-                    
-                    answer.setMarksObtained(isCorrect ? question.getMarks() : 0);
+                } catch (NumberFormatException ignored) {}
+            }
+            
+            if (question == null) continue;
+            boolean isCorrect = question.getCorrectOptionIndex() != null &&
+                    question.getCorrectOptionIndex().equals(answer.getSelectedOptionIndex());
+            answer.setIsCorrect(isCorrect);
+
+            if (isCorrect) {
+                correctAnswers++;
+                marksObtained += (question.getMarks() != null ? question.getMarks() : 1);
+                String category = question.getCategory();
+                if (category != null) {
+                    categoryWiseScore.put(category, categoryWiseScore.getOrDefault(category, 0)
+                            + (question.getMarks() != null ? question.getMarks() : 1));
                 }
             }
+
+            answer.setMarksObtained(isCorrect ? (question.getMarks() != null ? question.getMarks() : 1) : 0);
         }
         
         // Calculate percentage and grade
@@ -150,7 +166,7 @@ public class QuizService {
     }
     
     private void updateUserStats(String userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         List<QuizAttempt> attempts = quizAttemptRepository.findByUserId(userId);
